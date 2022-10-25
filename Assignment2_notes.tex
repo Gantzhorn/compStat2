@@ -1,0 +1,81 @@
+\documentclass[a4paper, 11 pt]{article}
+\usepackage{datetime}
+\usepackage{lipsum}
+\setlength{\columnsep}{25 pt}
+\usepackage{tabularx,booktabs,caption}
+\usepackage{multicol,tabularx,capt-of}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{blkarray}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{amsthm, amsmath, amssymb, amsfonts, commath, amsthm}
+\usepackage{placeins}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{listings}
+\usepackage{lastpage}
+\usepackage{enumerate}
+\usepackage{subcaption}
+\usepackage[danish]{babel}
+%\renewcommand{\qedsymbol}{\textit{Q.E.D}}
+\newtheorem{theorem}{Theorem}[section]
+\addto\captionsdanish{\renewcommand\proofname{Proof}}
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{corollary}[section]
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\newcommand{\code}[1]{\texttt{#1}}
+\lhead{Anders Gantzhorn - tzk942}
+\chead{}
+\rhead{09-11-2022}
+\pagestyle{fancy}
+\setlength{\headheight}{15pt}
+\cfoot{\thepage\ af \pageref{LastPage}}
+\setcounter{section}{0}
+\title{Importance sampling}
+\author{Anders G. Kristensen}
+\date{09-11-2022}
+\begin{document}
+\maketitle
+\section{Importance sampling}
+\noindent Let $X_1,X_2,\dots$ be i.i.d. uniform variables on $(-1.9, 2)$ and define
+\[
+    S_n = 30 + \sum_{k = 1}^n X_k
+\]
+Consider the ruin probability
+\[
+    p(n) = P(\exists k\leq n : S_k \leq 0)
+\]
+We use monte carlo integration to estimate $p(100)$. The key insight is that
+\[
+    p(n) = \mathbb{E}\left[I_{\left(\exists k\leq n : S_k\leq 0\right)}\right]    
+\]
+As a result we have by the strong law of large numbers
+\[
+    p(100) \approx \frac{1}{N}\sum_{i = 1}^N I_{\left(\left(\exists k\leq 100 : S_k\leq 0\right),i\right)}
+\]
+Where $N$ is the number of realizations of the experiment.\\
+Define:
+\[
+\varphi(\theta) = \int_{-1.9}^2 \exp\left(\theta z dz\right) = \frac{\exp\left(2\theta\right)-\exp\left(-1.9\theta\right)}{\theta}    
+\]
+Now let 
+\[
+    g_{\theta, n}(x) = \frac{1}{\varphi(\theta)^n}\exp{\left(\theta \sum_{k = 1}^n x_k\right)}  
+\]
+for $x\in(-1.9,2)^n$. Now we easily see that 
+\[
+    g_{\theta, n} = \prod_{i = 1}^n\left(g_{\theta, 1}\right)_i
+\]
+With $i = 1,\dots n$ different realizations of $g_{\theta,1}$. So we can manage be sampling from $g_{\theta,1}$. This we do be the quantile method. Firstly, the distribution function is
+\[
+    G_{\theta,1}(x) = \frac{1}{\varphi(\theta)}\int_0^x \exp\left(\theta t\right)dt = \frac{1}{\varphi(\theta)\theta}\left[\exp(\theta t)\right]_0^x = \frac{\exp(\theta x)-1}{\exp(2\theta)-\exp(-1.9\theta)}
+\]
+By solving the following equation we get the quantile function
+\begin{align*}
+    u &= \frac{\exp\left(\theta x\right)-1}{\exp(2\theta)-\exp(-1.9\theta)} \\
+    Q_{\theta,1}(u) &= \frac{\log\left(u\left(\exp(2\theta)-\exp(-1.9\theta)\right)+1\right)}{\theta}
+\end{align*}
+\end{document}
