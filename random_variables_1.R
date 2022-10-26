@@ -52,36 +52,30 @@ h + geom_ribbon(
 #--------------------------------------------------------------------------------------------------------#
 
 # Importance sampling
-q_IS <- function(theta = 0.2,  n = 100, N = 1000){
-  val <- numeric(N)
-  ruin <- numeric(N)
-  for (i in 1:N){
-  outcome <- capital_flow_calculator(n)[n]
-  val <- outcome$y
-  ruin <- 
-  }
-  
-  # h_vec <- numeric(N)
-  # for (i in 1:N){
-  #   h_vec[i] <- h(n)
-  # }
-  g_theta_n <- numeric(N)
-  norm <- numeric(N)
-  for (i in 1:N){
-  x <- runif(n, -1.9, 2)
-  g_theta_n[i] <- exp(theta*sum(x))
-  }
-  
-  
-  norm <- dlnorm(g_theta_n, meanlog = 0, sdlog = 1)
-  
-  wstar <- g_theta_n/norm
-  w <- wstar/sum(wstar)
-
-  out <- sum(h_vec*w)
-  out
+g_1theta <- function(theta = 0.1, x){
+  exp(theta*x)*theta/(exp(2*theta)-exp(-1.9*theta))
 }
 
+quant_func <- function(theta){
+  force(theta)
+  
+  k <- (exp(2*theta)-exp(-1.9*theta))/theta
+  function(x){
+  log(k * theta * x + exp(theta * (-1.9))) / theta
+  }
+}
 
-
-
+ruin_importance <- function(m,n , theta){
+  Q_1theta <- quant_func(theta)
+  
+  G <- Q_1theta(runif(n*m))
+  
+  dim(G) <- c(n,m)
+  
+  w_star <- exp(-theta * colSums(G))
+  
+  w <- w_star/sum(w_star)
+  print(w)
+  out <- mean(G*w)
+  out
+}
