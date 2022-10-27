@@ -39,10 +39,10 @@ res <- ruin_probability(N = 100000)
 sigma_hat <- sd(res$outcomes)
 
 
-h <- ggplot(data = as.data.frame(res), aes(x = seq_along(running_ruin_prob), y = running_ruin_prob)) +
+p1 <- ggplot(data = as.data.frame(res), aes(x = seq_along(running_ruin_prob), y = running_ruin_prob)) +
   geom_line(size = 1, col = "firebrick") + ylim(0, 0.005)
 
-h + geom_ribbon(
+p1 + geom_ribbon(
     mapping = aes(
       ymin = pmax(res$running_ruin_prob - 1.96 * sigma_hat / sqrt(1:res$number_of_sim),0), 
       ymax = pmin(res$running_ruin_prob + 1.96 * sigma_hat / sqrt(1:res$number_of_sim),1)
@@ -50,12 +50,6 @@ h + geom_ribbon(
 
   
 #--------------------------------------------------------------------------------------------------------#
-
-# Importance sampling
-# g_1theta <- function(theta = 0.1, x){
-#   exp(theta*x)*theta/(exp(2*theta)-exp(-1.9*theta))
-# }
-
 quant_func <- function(theta){
   force(theta)
   
@@ -84,22 +78,65 @@ ruin_importance <- function(n, m, theta){
     I[i] <- any(S<0)
   }
   
-  out <- cumsum(I*w_star)/cumsum(w_star)
+  mu_IS <- cumsum(I*w_star)/cumsum(w_star)
+  mu_IS
+  c_bar <- mean(w_star)
+  var_IS <- var(I*w_star)
+  gamma <- cov(I*w_star, w_star)
+  var_w <- var(w_star)
+  
+  var_T <-  c_bar^(-2)*(var_IS + mu_IS[m]*var_w-2*mu_IS[m]*gamma)/m
+  confint_low <- mu_IS[m] - 1.96*var_T
+  confint_high <- mu_IS[m] + 1.96*var_T
+  out <- list(p_est = mu_IS[m], mu_IS = mu_IS, var_T = var_T, confint_low = confint_low, confint_high = confint_high)
   out
 }
 
+res_IS <- ruin_importance(100, 10000, -0.5)
 
+# Find optimal theta for fixed sample size
+N_1 <- c(3750, 7500, 15000, 30000)
+#Rough search
+thetas <- seq(-0.5, 0.15, length.out = 50)
+var_mat <- numeric(length(thetas)*length(N_1))
 
+dim(var_mat) <- c(length(thetas), length(N_1))
 
-
-
-
-
-theta1 <- 0.5
-
-test <- quant_func(theta1)
-
-invtest <- function(x, theta = theta1 ){
-  (exp(theta*x)-exp(-1.9*theta))/(exp(2*theta)-exp(theta*(-1.9)))
+for (i in seq_along(N_1)){
+for (j in seq_along(thetas)){
+  var_mat[j, i] <- ruin_importance(100, N_1[i], thetas[j])$var_T
+}
 }
 
+colnames(var_mat) <- N_1
+
+tibble(theta = thetas, as_tibble(var_mat)) %>%
+  pivot_longer(cols = -theta, names_to = "N", values_to = "Variance") %>% 
+  ggplot(aes(x = theta, y = log(Variance), col = N)) + 
+  geom_line(size = 1)
+
+#Fine search
+thetasf <- seq(-0.1, -0.01, length.out = 50)
+var_matf <- numeric(length(thetasf)*length(N_1))
+
+dim(var_matf) <- c(length(thetasf), length(N_1))
+
+for (i in seq_along(N_1)){
+  for (j in seq_along(thetasf)){
+    var_matf[j, i] <- ruin_importance(100, N_1[i], thetasf[j])$var_T
+  }
+}
+
+colnames(var_matf) <- N_1
+
+tibble(theta = thetasf, as_tibble(var_matf)) %>%
+  pivot_longer(cols = -theta, names_to = "N", values_to = "Variance") %>% 
+  ggplot(aes(x = theta, y = log(Variance), col = N)) + 
+  geom_line(size = 1)
+
+#Optimal theta
+tibble(theta = thetasf, as_tibble(var_matf)) %>%
+  pivot_longer(cols = -theta, names_to = "N", values_to = "Variance") %>%
+  group_by(N) %>%
+  slice_min(Variance)
+s
