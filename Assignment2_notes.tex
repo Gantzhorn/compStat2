@@ -39,7 +39,8 @@
 \date{09-11-2022}
 \begin{document}
 \maketitle
-\section{Importance sampling}
+\section{Monte Carlo integration}
+\subsection{Direct implementation}
 \noindent Let $X_1,X_2,\dots$ be i.i.d. uniform variables on $(-1.9, 2)$ and define
 \[
     S_n = 30 + \sum_{k = 1}^n X_k
@@ -56,7 +57,8 @@ As a result we have by the strong law of large numbers
 \[
     p(100) \approx \frac{1}{N}\sum_{i = 1}^N I_{\left(\left(\exists k\leq 100 : S_k\leq 0\right),i\right)}
 \]
-Where $N$ is the number of realizations of the experiment.\\
+Where $N$ is the number of realizations of the experiment.
+\subsection{Importance sampling}
 Define:
 \[
 \varphi(\theta) = \int_{-1.9}^2 \exp\left(\theta z dz\right) = \frac{\exp\left(2\theta\right)-\exp\left(-1.9\theta\right)}{\theta}    
@@ -67,9 +69,9 @@ Now let
 \]
 for $x\in(-1.9,2)^n$. Now we easily see that 
 \[
-    g_{\theta, n} = \prod_{i = 1}^n\left(g_{\theta, 1}\right)_i
+    g_{\theta, n} = \prod_{k = 1}^n\left(g_{\theta, 1}\right)_k
 \]
-With $i = 1,\dots n$ different realizations of $g_{\theta,1}$. So we can manage be sampling from $g_{\theta,1}$. This we do be the quantile method. Firstly, the distribution function is
+With $k = 1,\dots n$ different realizations of $g_{\theta,1}$. So we can manage be sampling from $g_{\theta,1}$. This we do be the quantile method. Firstly, the distribution function is
 \[
     G_{\theta,1}(x) = \frac{1}{\varphi(\theta)}\int_{-1.9}^x \exp\left(\theta t\right)dt = \frac{1}{\varphi(\theta)\theta}\left[\exp(\theta t)\right]_{-1.9}^x = \frac{\exp(\theta x)-\exp(-1.9\theta)}{\exp(2\theta)-\exp(-1.9\theta)}
 \]
@@ -77,5 +79,47 @@ By solving the following equation we get the quantile function
 \begin{align*}
     u &= \frac{\exp\left(\theta x\right)-\exp(-1.9\theta)}{\exp(2\theta)-\exp(-1.9\theta)} \\
     Q_{\theta,1}(u) &= \frac{\log\left(u\left(\exp(2\theta)-\exp(-1.9\theta)\right)+\exp(-1.9\theta)\right)}{\theta}
+\end{align*}
+To simulate from $g_{\theta,1}$ we simulate from the standard uniform distribution and then transform the result with $Q_{\theta,1}(u)$. Analogously to earlier we check whether the event we are taking indicator occurs with our modified $S_n$: $S_{n,IS}$ Now define 
+\[
+    w^*(X_i) = q^*(X_i)/g_{\theta,1}^*(X_i)    
+\]
+Where $q^*, g_{\theta,1}^*$ are the unnormalized versions of the uniform density and the distribution from $g_{\theta,1}$ respectively. Thus our weights are
+\[
+    w(X_i) = \exp\left(-\theta X_i\right)    
+\]
+Let
+\[
+w(X_i) = \frac{w^*(X_i)}{\sum_{i = 1}^n w^*(X_i)}  
+\]
+From the lecture notes we now have 
+\[
+p(100)_{IS} = \sum_{i = 1}^N w(X_i)\cdot I_{\left(\exists k\leq n :S_{k,IS}\leq 0\right)}
+\]
+\subsection{Asymptotic results}
+\subsubsection{Direct implementation}
+By the central limit theorem we know that it for the original estimator holds that
+\[
+    \hat{p}(100) \overset{\text{approx.}}{\sim} \mathcal{N}\left(p(100), \frac{\sigma_{MC}^2}{N}\right)    
+\]
+We use $\hat{\sigma}_{MC}^2$ the empirical standard deviation. Thus a $95\%$ confidence-band for $\hat{p}(100)$ is:
+\[
+    \hat{p}(100) \pm \frac{\hat{\sigma}_{MC}}{\sqrt{n}} 
+\]
+Bearing in mind that this is an asymptotic result.
+\subsubsection{Importance sampling}
+From the notes we know that by the $\Delta$-method the asymptotic distribution of $p(100)_{IS}$ is
+\[
+    \hat{p}(100)_{IS} \overset{\text{approx.}}{\sim} \mathcal{N}\left(p(100), c^{-2}\frac{\sigma_{IS}^2 + p(100)^2 \sigma_w^2-2p(100)\gamma}{N}\right)    
+\]
+Where $c$ is the normalization constant for our densities, we can estimate this as
+\[
+    \hat{c} = \frac{1}{N}\sum_{i = 1}^N w^*(X_i)    
+\]
+Likewise, we have empirical estimates
+\begin{align*}
+    \hat{\sigma}_{IS}^2 &= V(I_{\left(\exists k\leq n :S_{k,IS}\leq 0\right)}w^*(X_i))\\
+    \hat{\gamma} &= cov(I_{\left(\exists k\leq n :S_{k,IS}\leq 0\right)}w^*(X_i), w^*(X_i))\\
+    \hat{\sigma}_{w}^2 &= V(w^*(X_i))
 \end{align*}
 \end{document}

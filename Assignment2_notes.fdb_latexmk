@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1666890586 "/home/anders/Desktop/Skole/Compstat/Assignment2/compStat2/Assignment2_notes.tex" "Assignment2_notes.pdf" "Assignment2_notes" 1666890587
+["pdflatex"] 1666907500 "/home/anders/Desktop/Skole/Compstat/Assignment2/compStat2/Assignment2_notes.tex" "Assignment2_notes.pdf" "Assignment2_notes" 1666907501
   "/etc/texmf/web2c/texmf.cnf" 1664912247 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/anders/Desktop/Skole/Compstat/Assignment2/compStat2/Assignment2_notes.tex" 1666890586 2909 f1dd56df425836711871bda35d1d6718 ""
+  "/home/anders/Desktop/Skole/Compstat/Assignment2/compStat2/Assignment2_notes.tex" 1666907499 4924 43bd1c2021c8ecd657c1b387e6435f49 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -9,6 +9,7 @@
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm" 1246382020 928 2dc8d444221b7a635bb58038579b861a ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm" 1246382020 908 2921f8a10601f252058503cc6570e581 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm" 1246382020 940 228d6584342e91276bf566bcf9716b83 ""
+  "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1136768653 1328 c834bbb027764024c09d3d2bf908b5f0 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmex10.tfm" 1136768653 992 662f679a0b3d2d53c1b94050fdaa3f50 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmmi10.tfm" 1136768653 1528 abec98dbc43e172678c11b3b9031252a ""
@@ -25,6 +26,7 @@
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm" 1136768653 1120 8b7d695260f3cff42e636090a8002094 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/rsfs/rsfs10.tfm" 1229303445 688 37338d6ab346c2f1466b29e195316aa4 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/rsfs/rsfs5.tfm" 1229303445 684 3a51bd4fd9600428d5264cf25f04bb9a ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb" 1248133631 34811 78b52f49e893bcba91bd7581cdc144c0 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1248133631 32080 340ef9bf63678554ee606688e7b5339d ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1248133631 30251 6afa5cb1d0204815a708a080681d4674 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1248133631 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
@@ -135,9 +137,9 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1644012257 39432 7155514e09a3d69036fac785183a21c2 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1664975026 4379155 98693266ff65f58d9f98aff394de12d2 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1664975068 2798020 26c5214b5852cf8cac94d6aad64f75e8 ""
-  "Assignment2_notes.aux" 1666890587 996 9c4776998e53984212dba60c876aeea0 "pdflatex"
-  "Assignment2_notes.out" 1666890587 141 3d6a20fd8f7d3a3be1f9d93495094eb1 "pdflatex"
-  "Assignment2_notes.tex" 1666890586 2909 f1dd56df425836711871bda35d1d6718 ""
+  "Assignment2_notes.aux" 1666907500 1653 a7d03685fb8b3670533c9b24c8485690 "pdflatex"
+  "Assignment2_notes.out" 1666907500 974 37a2236c7f73c5476d9a385c180f458f "pdflatex"
+  "Assignment2_notes.tex" 1666907499 4924 43bd1c2021c8ecd657c1b387e6435f49 ""
   (generated)
   "Assignment2_notes.aux"
   "Assignment2_notes.log"
