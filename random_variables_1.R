@@ -52,30 +52,54 @@ h + geom_ribbon(
 #--------------------------------------------------------------------------------------------------------#
 
 # Importance sampling
-g_1theta <- function(theta = 0.1, x){
-  exp(theta*x)*theta/(exp(2*theta)-exp(-1.9*theta))
-}
+# g_1theta <- function(theta = 0.1, x){
+#   exp(theta*x)*theta/(exp(2*theta)-exp(-1.9*theta))
+# }
 
 quant_func <- function(theta){
   force(theta)
   
-  k <- (exp(2*theta)-exp(-1.9*theta))/theta
+  k <- (exp(2*theta)-exp(theta*(-1.9)))
+  
   function(x){
-  log(k * theta * x + exp(theta * (-1.9))) / theta
+  log(k * x + exp(theta * (-1.9))) / theta
   }
 }
 
-ruin_importance <- function(m,n , theta){
+ruin_importance <- function(n, m, theta){
   Q_1theta <- quant_func(theta)
   
   G <- Q_1theta(runif(n*m))
-  
-  dim(G) <- c(n,m)
+
+  dim(G) <- c(n, m)
   
   w_star <- exp(-theta * colSums(G))
   
   w <- w_star/sum(w_star)
-  print(w)
-  out <- mean(G*w)
+  
+  I <- logical(m)
+  
+  for (i in 1:m){
+    S <- 30 + cumsum(G[, i])
+    I[i] <- any(S<0)
+  }
+  
+  out <- cumsum(I*w_star)/cumsum(w_star)
   out
 }
+
+
+
+
+
+
+
+
+theta1 <- 0.5
+
+test <- quant_func(theta1)
+
+invtest <- function(x, theta = theta1 ){
+  (exp(theta*x)-exp(-1.9*theta))/(exp(2*theta)-exp(theta*(-1.9)))
+}
+
