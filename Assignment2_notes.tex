@@ -71,11 +71,11 @@ for $x\in(-1.9,2)^n$. Now we easily see that
 \]
 With $i = 1,\dots n$ different realizations of $g_{\theta,1}$. So we can manage be sampling from $g_{\theta,1}$. This we do be the quantile method. Firstly, the distribution function is
 \[
-    G_{\theta,1}(x) = \frac{1}{\varphi(\theta)}\int_0^x \exp\left(\theta t\right)dt = \frac{1}{\varphi(\theta)\theta}\left[\exp(\theta t)\right]_0^x = \frac{\exp(\theta x)-1}{\exp(2\theta)-\exp(-1.9\theta)}
+    G_{\theta,1}(x) = \frac{1}{\varphi(\theta)}\int_{-1.9}^x \exp\left(\theta t\right)dt = \frac{1}{\varphi(\theta)\theta}\left[\exp(\theta t)\right]_{-1.9}^x = \frac{\exp(\theta x)-\exp(-1.9\theta)}{\exp(2\theta)-\exp(-1.9\theta)}
 \]
 By solving the following equation we get the quantile function
 \begin{align*}
-    u &= \frac{\exp\left(\theta x\right)-1}{\exp(2\theta)-\exp(-1.9\theta)} \\
-    Q_{\theta,1}(u) &= \frac{\log\left(u\left(\exp(2\theta)-\exp(-1.9\theta)\right)+1\right)}{\theta}
+    u &= \frac{\exp\left(\theta x\right)-\exp(-1.9\theta)}{\exp(2\theta)-\exp(-1.9\theta)} \\
+    Q_{\theta,1}(u) &= \frac{\log\left(u\left(\exp(2\theta)-\exp(-1.9\theta)\right)+\exp(-1.9\theta)\right)}{\theta}
 \end{align*}
 \end{document}

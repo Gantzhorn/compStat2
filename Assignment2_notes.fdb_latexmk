@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1666728799 "/home/anders/Desktop/Skole/Compstat/Assignment2/compStat2/Assignment2_notes.tex" "Assignment2_notes.pdf" "Assignment2_notes" 1666728800
+["pdflatex"] 1666890586 "/home/anders/Desktop/Skole/Compstat/Assignment2/compStat2/Assignment2_notes.tex" "Assignment2_notes.pdf" "Assignment2_notes" 1666890587
   "/etc/texmf/web2c/texmf.cnf" 1664912247 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/anders/Desktop/Skole/Compstat/Assignment2/compStat2/Assignment2_notes.tex" 1666728798 2854 6e0e13643d6ea827e374e17e6fbebebe ""
+  "/home/anders/Desktop/Skole/Compstat/Assignment2/compStat2/Assignment2_notes.tex" 1666890586 2909 f1dd56df425836711871bda35d1d6718 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -135,9 +135,9 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1644012257 39432 7155514e09a3d69036fac785183a21c2 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1664975026 4379155 98693266ff65f58d9f98aff394de12d2 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1664975068 2798020 26c5214b5852cf8cac94d6aad64f75e8 ""
-  "Assignment2_notes.aux" 1666728800 996 9c4776998e53984212dba60c876aeea0 "pdflatex"
-  "Assignment2_notes.out" 1666728800 141 3d6a20fd8f7d3a3be1f9d93495094eb1 "pdflatex"
-  "Assignment2_notes.tex" 1666728798 2854 6e0e13643d6ea827e374e17e6fbebebe ""
+  "Assignment2_notes.aux" 1666890587 996 9c4776998e53984212dba60c876aeea0 "pdflatex"
+  "Assignment2_notes.out" 1666890587 141 3d6a20fd8f7d3a3be1f9d93495094eb1 "pdflatex"
+  "Assignment2_notes.tex" 1666890586 2909 f1dd56df425836711871bda35d1d6718 ""
   (generated)
   "Assignment2_notes.aux"
   "Assignment2_notes.log"
