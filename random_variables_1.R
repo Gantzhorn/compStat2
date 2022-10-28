@@ -1,6 +1,7 @@
 library(tidyverse)
 theme_set(theme_bw())
 library(microbenchmark)
+library(bench)
 library(profvis)
 
 #Monte Carlo integration:
@@ -88,7 +89,7 @@ ruin_importance <- function(n, m, theta){
   var_T <-  c_bar^(-2)*(var_IS + mu_IS[m]*var_w-2*mu_IS[m]*gamma)/m
   confint_low <- mu_IS[m] - 1.96*var_T
   confint_high <- mu_IS[m] + 1.96*var_T
-  out <- list(p_est = mu_IS[m], mu_IS = mu_IS, var_T = var_T, confint_low = confint_low, confint_high = confint_high)
+  out <- list(outcomes = I, p_est = mu_IS[m], mu_IS = mu_IS, var_T = var_T, confint_low = confint_low, confint_high = confint_high)
   out
 }
 
@@ -113,7 +114,7 @@ colnames(var_mat) <- N_1
 tibble(theta = thetas, as_tibble(var_mat)) %>%
   pivot_longer(cols = -theta, names_to = "N", values_to = "Variance") %>% 
   ggplot(aes(x = theta, y = log(Variance), col = N)) + 
-  geom_line(size = 1)
+  geom_point() + geom_smooth(se = F)
 
 #Fine search
 thetasf <- seq(-0.1, -0.01, length.out = 50)
@@ -132,11 +133,56 @@ colnames(var_matf) <- N_1
 tibble(theta = thetasf, as_tibble(var_matf)) %>%
   pivot_longer(cols = -theta, names_to = "N", values_to = "Variance") %>% 
   ggplot(aes(x = theta, y = log(Variance), col = N)) + 
-  geom_line(size = 1)
+  geom_point(size = 1) + geom_smooth(se = F)
 
 #Optimal theta
-tibble(theta = thetasf, as_tibble(var_matf)) %>%
+theta_opt <- tibble(theta = thetasf, as_tibble(var_matf)) %>%
   pivot_longer(cols = -theta, names_to = "N", values_to = "Variance") %>%
   group_by(N) %>%
-  slice_min(Variance)
-s
+  slice_min(Variance) %>% 
+  ungroup() %>% 
+  summarise(theta_opt = mean(theta)) %>% pull()
+
+#Compare normal MC to IS-MC, variance
+var_seq <- c(1000,2500,5000, 7500, 10000, 12500,15000, 30000, 50000, 75000, 100000)
+
+var_comp <- numeric(2*length(var_seq))
+
+dim(var_comp) <- c(length(var_seq), 2)
+
+for (i in 1:length(var_seq)){
+ var_comp[i, 1] <- var(ruin_probability(100, var_seq[i])$outcomes)
+ var_comp[i, 2] <- ruin_importance(100, var_seq[i], theta_opt)$var_T
+}
+
+tibble(MC = var_comp[, 1], IS = var_comp[, 2], N = var_seq) %>% 
+  pivot_longer(-N, names_to = "type", values_to = "Variance") %>% 
+  ggplot(aes(x = N, y = log(Variance), col = type)) + geom_smooth(se = FALSE)
+
+
+#Benchmarking
+benchmark_1 <- microbenchmark::microbenchmark(ruin_probability(100, 1000),
+                                             ruin_probability(100, 2500),
+                                             ruin_probability(100, 5000),
+                                             ruin_probability(100, 15000),
+                                             ruin_probability(100, 30000),
+                                             ruin_probability(100, 50000),
+                                             ruin_importance(100, 1000, theta_opt),
+                                             ruin_importance(100, 2500, theta_opt),
+                                             ruin_importance(100, 5000, theta_opt),
+                                             ruin_importance(100, 15000, theta_opt),
+                                             ruin_importance(100, 30000, theta_opt),
+                                             ruin_importance(100, 50000, theta_opt))
+
+
+tibble(expr = benchmark_1$expr, time = benchmark_1$time/1000000000) %>%
+  mutate(N = as.integer(case_when(str_detect(expr, "1000") ~ "1000",
+                                  str_detect(expr, "2500") ~ "2500",
+                                  str_detect(expr, "5000") &
+                                  str_detect(expr, "0000") == FALSE &
+                                  str_detect(expr, "15") == FALSE  ~ "5000",
+                                  str_detect(expr, "15000") ~ "15000",
+                                  str_detect(expr, "30000") ~ "30000",
+                                  str_detect(expr, "50000") ~ "50000")),
+         type = ifelse(str_detect(expr, "importance"), "IS", "MC")) %>% 
+  ggplot(aes(x = N, y = time, col = type)) + geom_smooth(span = 0.4, se = F)
