@@ -5,6 +5,8 @@ library(profvis)
 ggplot2::theme_set(theme_bw())
 library(riskRegression) #For colCumSum
 
+source("~/Desktop/Skole/Compstat/Assignment2/compStat2/MC_1.R")
+source("~/Desktop/Skole/Compstat/Assignment2/compStat2/MC_IS.R")
 #Results initial implementation
 res <- ruin_probability(n = 100, N = 10000)
 
@@ -14,7 +16,7 @@ sigma_hat <- sd(res$outcomes)
 
 
 p1 <- ggplot(data = as.data.frame(res), aes(x = seq_along(outcomes), y = cumsum(outcomes)/1:10000)) +
-  geom_line(size = 1, col = "firebrick")  + ylim(c(0, 0.015))
+  geom_line(size = 1, col = "firebrick")
 
 p1 + geom_ribbon(
   mapping = aes(
@@ -25,7 +27,7 @@ p1 + geom_ribbon(
 
 #--------------------------------------------------------------------------------------------------------#
 # Initial benchmarking and profiling
-profvis::profvis({source("~/Desktop/Skole/Compstat/Assignment2/compStat2/MC_1.R")})
+#profvis::profvis({source("~/Desktop/Skole/Compstat/Assignment2/compStat2/MC_1.R")})
 
 init_bench <- microbenchmark::microbenchmark(ruin_probability(n = 100, N = 10000),
                                ruin_probability_vec1(n = 100, N = 10000),
@@ -97,6 +99,27 @@ theta_opt <- tibble(theta = thetasf, as_tibble(var_matf)) %>%
   ungroup() %>% 
   summarise(theta_opt = mean(theta)) %>% pull()
 
+# Optimal theta computation time
+# time_mat <- numeric(length(thetas)*length(N_1))
+# 
+# dim(time_mat) <- c(length(thetas), length(N_1))
+# 
+# for (i in seq_along(N_1)){
+#   for (j in seq_along(thetasf)){
+#     time_mat[j, i] <- summary(microbenchmark::microbenchmark(ruin_importance(100, N_1[i], thetas[j]), times = 50))$median
+#   }
+# }
+# 
+# as_tibble(time_mat) %>% tibble(., theta = thetas) %>%
+#   pivot_longer(-theta) %>%
+#   mutate(N = case_when(name == "V1" ~ "3750",name == "V2" ~ "7500",name == "V3" ~ "15000",name == "V4" ~ "30000"), time = value) %>% 
+#   ggplot(aes(x = theta, y = time, col = N)) +
+#   geom_line(size = 1) + theme(axis.title = element_text(size = 20)) + theme(axis.text = element_text(size = 14)) + 
+#   xlab(expression(theta))
+
+
+
+
 #Compare normal MC to IS-MC, variance
 var_seq <- c(1000,2500,5000, 7500, 10000, 12500,15000, 30000, 50000, 75000, 100000)
 
@@ -140,3 +163,7 @@ tibble(expr = benchmark_1$expr, time = benchmark_1$time/1000000000) %>%
                                   str_detect(expr, "50000") ~ "50000")),
          type = ifelse(str_detect(expr, "importance"), "IS", "MC")) %>% 
   ggplot(aes(x = N, y = time, col = type)) + geom_smooth(span = 0.4, se = F)
+
+# Rcpp implementation
+Rcpp::sourceCpp(file = "MC_Rcpp.cpp")
+timesTwo(100, 10)
