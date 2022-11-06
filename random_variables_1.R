@@ -166,4 +166,58 @@ tibble(expr = benchmark_1$expr, time = benchmark_1$time/1000000000) %>%
 
 # Rcpp implementation
 Rcpp::sourceCpp(file = "MC_Rcpp.cpp")
-timesTwo(100, 10)
+ruin_probability_cpp(100, 500000)
+
+#Benchmark rcpp vs R implementation
+cppvR <- microbenchmark(ruin_probability(n = 100, N = 20000),
+               ruin_probability_vec1(n = 100, N = 20000),
+               ruin_probability_vec2(n = 100, N = 20000),
+               ruin_probability_cpp(n = 100, N = 20000))
+
+cppvR %>% as_tibble() %>% mutate(time = time/1000000000) %>% ggplot(aes(x = time, fill = expr)) + geom_density(alpha = .6) +
+  scale_fill_discrete(labels=c('R for loop', 'R partly vectorized', 'R vectorized', "Rcpp"))
+
+cppvRrange <- microbenchmark(ruin_probability(n = 100, N = 1000),
+                             ruin_probability_vec1(n = 100, N = 1000),
+                             ruin_probability_vec2(n = 100, N = 1000),
+                             ruin_probability_cpp(n = 100, N = 1000),
+                             ruin_probability(n = 100, N = 5000),
+                             ruin_probability_vec1(n = 100, N = 5000),
+                             ruin_probability_vec2(n = 100, N = 5000),
+                             ruin_probability_cpp(n = 100, N = 5000),
+                             ruin_probability(n = 100, N = 12000),
+                             ruin_probability_vec1(n = 100, N = 12000),
+                             ruin_probability_vec2(n = 100, N = 12000),
+                             ruin_probability_cpp(n = 100, N = 12000),
+                             ruin_probability(n = 100, N = 30000),
+                             ruin_probability_vec1(n = 100, N = 30000),
+                             ruin_probability_vec2(n = 100, N = 30000),
+                             ruin_probability_cpp(n = 100, N = 30000),
+                             ruin_probability(n = 100, N = 44000),
+                             ruin_probability_vec1(n = 100, N = 44000),
+                             ruin_probability_vec2(n = 100, N = 44000),
+                             ruin_probability_cpp(n = 100, N = 44000),
+                             ruin_probability(n = 100, N = 60000),
+                             ruin_probability_vec1(n = 100, N = 60000),
+                             ruin_probability_vec2(n = 100, N = 60000),
+                             ruin_probability_cpp(n = 100, N = 60000))
+
+cppvRrange %>% as_tibble() %>% mutate(N = case_when(str_detect(expr, "1000") == TRUE ~ 1000,
+                                      str_detect(expr, "5000") == TRUE ~ 5000,
+                                      str_detect(expr, "44000") == TRUE ~ 44000,
+                                      str_detect(expr, "30000") == TRUE ~ 30000,
+                                      str_detect(expr, "12000") == TRUE ~ 12000,
+                                      str_detect(expr, "60000") == TRUE ~ 60000),
+                                      Implementation = case_when(str_detect(expr, "vec2") == TRUE ~ "R vectorized",
+                                                                 str_detect(expr, "vec1") == TRUE ~"R partly vectorized",
+                                                                 str_detect(expr, "cpp") == TRUE ~ "Rcpp")) %>% 
+                                      mutate(Implementation = ifelse(is.na(Implementation), "R for loop", Implementation),
+                                             time = time/1000000000) %>% select(time, N, Implementation) %>% 
+  group_by(N, Implementation) %>% summarise(time = median(time)) %>% 
+  ggplot(aes(x = N, y = time, col = Implementation)) + geom_smooth(se = F) + theme(axis.text = element_text(size = 12, face="bold"),
+                                                                                   axis.title = element_text(face = "bold", size = 16),
+                                                                                   legend.text = element_text(face = "bold"),
+                                                                                   legend.title = element_text(face = "bold", size = 15))
+  
+
+
